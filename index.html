@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantumCalc — Neo-Minimalist Multi-Level Calculator & Quantum Debugger</title>
+    <!-- Montserrat font as requested in UI design reference -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Fira+Code:wght@500;600&display=swap" rel="stylesheet">
+    <!-- KaTeX for crisp formula rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        (function() {
+            const saved = localStorage.getItem('quantumcalc_theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = saved === 'dark' || (!saved && prefersDark);
+            if (isDark) {
+                document.documentElement.classList.add('dark-theme');
+                document.documentElement.classList.remove('light-theme');
+            } else {
+                document.documentElement.classList.add('light-theme');
+                document.documentElement.classList.remove('dark-theme');
+            }
+        })();
+    </script>
+</head>
+<body class="light-theme" id="app-body">
+    <script>
+        if (document.documentElement.classList.contains('dark-theme')) {
+            document.body.classList.remove('light-theme');
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+    <div class="workspace-wrapper">
+        <!-- Top App Navigation & Master Level Slider -->
+        <header class="top-nav-bar">
+            <div class="brand-badge">
+                <div class="brand-dot"></div>
+                <span class="brand-name">QUANTUM<strong>CALC</strong></span>
+                <span class="brand-sub">NEO-MINIMAL</span>
+            </div>
+
+            <!-- Multi-Page Level Switcher Bar -->
+            <div class="level-slider-wrapper">
+                <nav class="level-selector-bar" role="tablist" aria-label="Calculator Level Pages">
+                    <button class="level-pill active" data-level="1" id="btn-lvl-1" role="tab">
+                        <span class="pill-badge">1.</span>
+                        <span class="pill-text">Arithmetic</span>
+                    </button>
+                    <button class="level-pill" data-level="2" id="btn-lvl-2" role="tab">
+                        <span class="pill-badge">2.</span>
+                        <span class="pill-text">Algebra & Trig</span>
+                    </button>
+                    <button class="level-pill" data-level="3" id="btn-lvl-3" role="tab">
+                        <span class="pill-badge">3.</span>
+                        <span class="pill-text">Calculus</span>
+                    </button>
+                    <button class="level-pill" data-level="4" id="btn-lvl-4" role="tab">
+                        <span class="pill-badge">4.</span>
+                        <span class="pill-text">Matrices</span>
+                    </button>
+                    <button class="level-pill" data-level="5" id="btn-lvl-5" role="tab">
+                        <span class="pill-badge">5.</span>
+                        <span class="pill-text">Quantum & Debug</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="theme-toggle-wrapper">
+                <button id="theme-btn" class="neo-round-btn" title="Toggle Light/Dark Theme" aria-label="Toggle Light/Dark Theme">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Horizontal Sliding Viewport: Changes page within pages -->
+        <main class="pages-viewport">
+            <div class="pages-slider-track" id="pages-slider-track">
+
+                <!-- ==============================================
+                     PAGE 1 SLIDE: L1 ARITHMETIC STUDIO
+                     ============================================== -->
+                <div class="studio-page-slide" id="slide-l1" data-level="1">
+                    <div class="main-layout">
+                        <!-- Left: L1 Handheld Device -->
+                        <div class="calc-device-frame">
+                            <div class="device-sensor-bar">
+                                <span class="sensor-dot"></span>
+                                <span class="speaker-slit"></span>
+                            </div>
+
+                            <div class="screen-device-header">
+                                <div class="screen-pill-tabs">
+                                    <button class="screen-pill-tab active">STANDARD</button>
+                                    <button class="screen-pill-tab" data-toggle-history="1">HISTORY</button>
+                                </div>
+                                <div class="screen-sub-pills">
+                                    <span class="mini-pill">DEG</span>
+                                    <span class="mini-pill green">READY</span>
+                                </div>
+                            </div>
+
+                            <div class="calc-screen">
+                                <div class="screen-mode-tag"><span class="badge-dot">●</span> 1. ARITHMETIC</div>
+                                <div class="screen-input-row">
+                                    <input type="text" class="screen-math-input page-input" data-level="1" value="125 * 4 + sqrt(144)" autocomplete="off" spellcheck="false" />
+                                    <button class="screen-eval-icon page-eval-btn" data-level="1" title="Compute">↵</button>
+                                </div>
+                                <div class="screen-result-line page-result" data-level="1">512</div>
+                                <div class="screen-katex-line page-katex" data-level="1">$$125 \times 4 + \sqrt{144}$$</div>
+                            </div>
+
+                            <!-- Keypad -->
+                            <div class="device-keypad-scroll">
+                                <div class="keypad-row action-row">
+                                    <button class="neo-key key-clear page-key-c" data-level="1">C</button>
+                                    <button class="neo-key key-clear-entry page-key-ce" data-level="1">CE</button>
+                                    <button class="neo-key key-back page-key-back" data-level="1">⌫</button>
+                                    <button class="neo-key key-op" data-insert=" * " data-level="1">×</button>
+                                </div>
+
+                                <div class="keypad-grid num-grid">
+                                    <button class="neo-key key-num" data-insert="7" data-level="1">7</button>
+                                    <button class="neo-key key-num" data-insert="8" data-level="1">8</button>
+                                    <button class="neo-key key-num" data-insert="9" data-level="1">9</button>
+                                    <button class="neo-key key-op" data-insert=" / " data-level="1">÷</button>
+
+                                    <button class="neo-key key-num" data-insert="4" data-level="1">4</button>
+                                    <button class="neo-key key-num" data-insert="5" data-level="1">5</button>
+                                    <button class="neo-key key-num" data-insert="6" data-level="1">6</button>
+                                    <button class="neo-key key-op" data-insert=" - " data-level="1">−</button>
+
+                                    <button class="neo-key key-num" data-insert="1" data-level="1">1</button>
+                                    <button class="neo-key key-num" data-insert="2" data-level="1">2</button>
+                                    <button class="neo-key key-num" data-insert="3" data-level="1">3</button>
+                                    <button class="neo-key key-op key-plus-tall" data-insert=" + " data-level="1">+</button>
+
+                                    <button class="neo-key key-num" data-insert="0" data-level="1">0</button>
+                                    <button class="neo-key key-num" data-insert="." data-level="1">.</button>
+                                    <button class="neo-key key-equals page-key-equals" data-level="1">=</button>
+                                </div>
+
+                                <div class="section-title">ARITHMETIC OPERATORS</div>
+                                <div class="keypad-grid aux-grid">
+                                    <button class="neo-key key-fn" data-insert="sqrt(" data-level="1">√</button>
+                                    <button class="neo-key key-fn" data-insert="^" data-level="1">xʸ</button>
+                                    <button class="neo-key key-fn" data-insert="!" data-level="1">n!</button>
+                                    <button class="neo-key key-fn" data-insert="%" data-level="1">%</button>
+                                    <button class="neo-key key-fn" data-insert="pi" data-level="1">π</button>
+                                    <button class="neo-key key-fn" data-insert="e" data-level="1">e</button>
+                                    <button class="neo-key key-fn" data-insert="(" data-level="1">(</button>
+                                    <button class="neo-key key-fn" data-insert=")" data-level="1">)</button>
+                                </div>
+                            </div>
+
+                            <div class="device-presets-bar">
+                                <span class="presets-label">PAGE 1 PRESETS:</span>
+                                <div class="preset-chips-scroll page-presets" data-level="1"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: L1 Interactive Studio Deck -->
+                        <div class="interactive-deck-container">
+                            <div class="deck-tabs-bar" role="tablist">
+                                <button class="deck-tab-btn active" data-view="l1-tape">
+                                    <span class="tab-icon">📝</span>
+                                    <span class="tab-name">TAPE LEDGER & AUDIT</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l1-pemdas">
+                                    <span class="tab-icon">🧩</span>
+                                    <span class="tab-name">PEMDAS SYNTAX TREE</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l1-base">
+                                    <span class="tab-icon">🔢</span>
+                                    <span class="tab-name">BASE & FACTORS</span>
+                                </button>
+                            </div>
+
+                            <div class="deck-body-card">
+                                <div class="deck-view active" id="view-l1-tape">
+                                    <div class="deck-view-header">
+                                        <div>
+                                            <h2 class="view-title">L1 Arithmetic Tape Ledger & Audit</h2>
+                                            <p class="view-subtitle">Chronological ledger of calculated expressions with running statistics</p>
+                                        </div>
+                                        <div class="deck-actions-group">
+                                            <button class="action-sm-btn" id="btn-copy-ledger">Copy Ledger</button>
+                                            <button class="action-sm-btn danger" id="btn-clear-ledger">Clear</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="ledger-stats-row">
+                                        <div class="stat-mini-card">
+                                            <span class="stat-mini-label">TOTAL OPERATIONS</span>
+                                            <span class="stat-mini-val" id="l1-stat-count">0</span>
+                                        </div>
+                                        <div class="stat-mini-card">
+                                            <span class="stat-mini-label">CUMULATIVE SUM</span>
+                                            <span class="stat-mini-val" id="l1-stat-sum">0</span>
+                                        </div>
+                                        <div class="stat-mini-card">
+                                            <span class="stat-mini-label">AVERAGE RESULT</span>
+                                            <span class="stat-mini-val" id="l1-stat-avg">0</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="ledger-table-container">
+                                        <table class="neo-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>TIME</th>
+                                                    <th>EXPRESSION</th>
+                                                    <th>RESULT</th>
+                                                    <th>ACTION</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="l1-ledger-tbody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="deck-view" id="view-l1-pemdas">
+                                    <div class="deck-view-header">
+                                        <div>
+                                            <h2 class="view-title">Order of Operations (PEMDAS / BODMAS) Tree</h2>
+                                            <p class="view-subtitle">Hierarchical syntax evaluation precedence tree for arithmetic expressions</p>
+                                        </div>
+                                        <div class="pemdas-legend">
+                                            <span class="legend-badge p">P: Parentheses</span>
+                                            <span class="legend-badge e">E: Exponents</span>
+                                            <span class="legend-badge md">MD: Multiply / Divide</span>
+                                            <span class="legend-badge as">AS: Add / Subtract</span>
+                                        </div>
+                                    </div>
+                                    <div class="pemdas-tree-box" id="pemdas-tree-container"></div>
+                                </div>
+
+                                <div class="deck-view" id="view-l1-base">
+                                    <div class="deck-view-header">
+                                        <div>
+                                            <h2 class="view-title">Number Base Converter & Prime Inspector</h2>
+                                            <p class="view-subtitle">Decomposition of current integer result into representations & factors</p>
+                                        </div>
+                                        <span class="status-badge-neo pass" id="l1-prime-badge">PRIME CHECK</span>
+                                    </div>
+
+                                    <div class="neo-diag-grid">
+                                        <div class="diag-card">
+                                            <div class="diag-card-top"><span class="diag-card-title">Decimal (Base 10)</span></div>
+                                            <div class="base-repr-display" id="l1-base-dec">512</div>
+                                        </div>
+                                        <div class="diag-card">
+                                            <div class="diag-card-top"><span class="diag-card-title">Hexadecimal (Base 16)</span></div>
+                                            <div class="base-repr-display mono" id="l1-base-hex">0x200</div>
+                                        </div>
+                                        <div class="diag-card">
+                                            <div class="diag-card-top"><span class="diag-card-title">Binary (Base 2)</span></div>
+                                            <div class="base-repr-display mono" id="l1-base-bin">0b1000000000</div>
+                                        </div>
+                                        <div class="diag-card">
+                                            <div class="diag-card-top"><span class="diag-card-title">Octal (Base 8)</span></div>
+                                            <div class="base-repr-display mono" id="l1-base-oct">0o1000</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="factors-inspector-card">
+                                        <h3 class="card-section-title">Prime Factorization & Properties</h3>
+                                        <div class="factors-content" id="l1-factors-content"><strong>512</strong> = 2⁹ (Power of 2, Perfect Square: 16², Perfect Cube: 8³)</div>
+                                        <div class="fraction-simplifier-row">
+                                            <span class="row-label">Fraction Simplifier:</span>
+                                            <input type="number" id="frac-num" class="mini-input" value="125" />
+                                            <span>/</span>
+                                            <input type="number" id="frac-den" class="mini-input" value="500" />
+                                            <button class="action-sm-btn" id="btn-simplify-frac">Simplify</button>
+                                            <span class="frac-res-badge" id="frac-res-text">= 1 / 4</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="derivation-bottom-card">
+                                <div class="derivation-header">
+                                    <span class="section-kicker">PAGE 1 DERIVATION & PEMDAS STEPS</span>
+                                    <button class="copy-link-btn" data-copy-deriv="1">Copy Result</button>
+                                </div>
+                                <div class="derivation-steps-list page-deriv-list" data-level="1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     PAGE 2 SLIDE: L2 ALGEBRA & TRIG STUDIO
+                     ============================================== -->
+                <div class="studio-page-slide" id="slide-l2" data-level="2">
+                    <div class="main-layout">
+                        <!-- Left: L2 Handheld Device -->
+                        <div class="calc-device-frame">
+                            <div class="device-sensor-bar">
+                                <span class="sensor-dot"></span>
+                                <span class="speaker-slit"></span>
+                            </div>
+
+                            <div class="screen-device-header">
+                                <div class="screen-pill-tabs">
+                                    <button class="screen-pill-tab active">STANDARD</button>
+                                    <button class="screen-pill-tab" data-toggle-history="2">HISTORY</button>
+                                </div>
+                                <div class="screen-sub-pills">
+                                    <span class="mini-pill">RAD/DEG</span>
+                                    <span class="mini-pill green">READY</span>
+                                </div>
+                            </div>
+
+                            <div class="calc-screen">
+                                <div class="screen-mode-tag"><span class="badge-dot">●</span> 2. ALGEBRA & TRIG</div>
+                                <div class="screen-input-row">
+                                    <input type="text" class="screen-math-input page-input" data-level="2" value="sin(pi/4) + cos(pi/4)" autocomplete="off" spellcheck="false" />
+                                    <button class="screen-eval-icon page-eval-btn" data-level="2" title="Compute">↵</button>
+                                </div>
+                                <div class="screen-result-line page-result" data-level="2">1.4142</div>
+                                <div class="screen-katex-line page-katex" data-level="2">$$\sin(\pi/4) + \cos(\pi/4)$$</div>
+                            </div>
+
+                            <div class="device-keypad-scroll">
+                                <div class="keypad-row action-row">
+                                    <button class="neo-key key-clear page-key-c" data-level="2">C</button>
+                                    <button class="neo-key key-clear-entry page-key-ce" data-level="2">CE</button>
+                                    <button class="neo-key key-back page-key-back" data-level="2">⌫</button>
+                                    <button class="neo-key key-op" data-insert=" * " data-level="2">×</button>
+                                </div>
+
+                                <div class="keypad-grid num-grid">
+                                    <button class="neo-key key-num" data-insert="7" data-level="2">7</button>
+                                    <button class="neo-key key-num" data-insert="8" data-level="2">8</button>
+                                    <button class="neo-key key-num" data-insert="9" data-level="2">9</button>
+                                    <button class="neo-key key-op" data-insert=" / " data-level="2">÷</button>
+
+                                    <button class="neo-key key-num" data-insert="4" data-level="2">4</button>
+                                    <button class="neo-key key-num" data-insert="5" data-level="2">5</button>
+                                    <button class="neo-key key-num" data-insert="6" data-level="2">6</button>
+                                    <button class="neo-key key-op" data-insert=" - " data-level="2">−</button>
+
+                                    <button class="neo-key key-num" data-insert="1" data-level="2">1</button>
+                                    <button class="neo-key key-num" data-insert="2" data-level="2">2</button>
+                                    <button class="neo-key key-num" data-insert="3" data-level="2">3</button>
+                                    <button class="neo-key key-op key-plus-tall" data-insert=" + " data-level="2">+</button>
+
+                                    <button class="neo-key key-num" data-insert="0" data-level="2">0</button>
+                                    <button class="neo-key key-num" data-insert="." data-level="2">.</button>
+                                    <button class="neo-key key-equals page-key-equals" data-level="2">=</button>
+                                </div>
+
+                                <div class="section-title">ALGEBRA & TRIG FUNCTIONS</div>
+                                <div class="keypad-grid aux-grid">
+                                    <button class="neo-key key-fn" data-insert="sin(" data-level="2">sin</button>
+                                    <button class="neo-key key-fn" data-insert="cos(" data-level="2">cos</button>
+                                    <button class="neo-key key-fn" data-insert="tan(" data-level="2">tan</button>
+                                    <button class="neo-key key-fn" data-insert="ln(" data-level="2">ln</button>
+                                    <button class="neo-key key-fn" data-insert="log(" data-level="2">log₁₀</button>
+                                    <button class="neo-key key-fn" data-insert="exp(" data-level="2">eˣ</button>
+                                    <button class="neo-key key-fn" data-insert="i" data-level="2">i</button>
+                                    <button class="neo-key key-fn" data-insert="x" data-level="2">x</button>
+                                    <button class="neo-key key-fn" data-insert="x^2" data-level="2">x²</button>
+                                    <button class="neo-key key-fn" data-insert="quad:1,-5,6" data-level="2">x²−5x+6</button>
+                                </div>
+                            </div>
+
+                            <div class="device-presets-bar">
+                                <span class="presets-label">PAGE 2 PRESETS:</span>
+                                <div class="preset-chips-scroll page-presets" data-level="2"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: L2 Interactive Studio Deck -->
+                        <div class="interactive-deck-container">
+                            <div class="deck-tabs-bar" role="tablist">
+                                <button class="deck-tab-btn active" data-view="l2-circle">
+                                    <span class="tab-icon">⭕</span>
+                                    <span class="tab-name">INTERACTIVE UNIT CIRCLE</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l2-quad">
+                                    <span class="tab-icon">⚖️</span>
+                                    <span class="tab-name">QUADRATIC & ROOT SOLVER</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l2-complex">
+                                    <span class="tab-icon">🧭</span>
+                                    <span class="tab-name">COMPLEX ARGAND PLANE</span>
+                                </button>
+                            </div>
+
+                            <div class="deck-body-card">
+                                <div class="deck-view active" id="view-l2-circle">
+                                    <div class="deck-view-header">
+                                        <div>
+                                            <h2 class="view-title">Interactive Trigonometric Unit Circle</h2>
+                                            <p class="view-subtitle">Coordinates on unit circle S¹: x = cos(θ), y = sin(θ), tan(θ) = sin(θ)/cos(θ)</p>
+                                        </div>
+                                        <div class="bloch-angles-badge">
+                                            <span>θ = <strong id="trig-deg-val">45°</strong></span>
+                                            <span>(<strong id="trig-rad-val">π/4 rad</strong>)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="unit-circle-canvas-box">
+                                        <canvas id="unit-circle-canvas"></canvas>
+                                        <div class="canvas-drag-hint">Drag angle slider or click presets</div>
+                                    </div>
+
+                                    <div class="unit-circle-controls-bar">
+                                        <div class="slider-control-row">
+                                            <span class="slider-label">Angle θ:</span>
+                                            <input type="range" id="unit-circle-slider" min="0" max="360" value="45" class="neo-slider" />
+                                            <div class="angle-quick-chips">
+                                                <button class="quick-angle-btn" data-deg="0">0°</button>
+                                                <button class="quick-angle-btn" data-deg="30">30°</button>
+                                                <button class="quick-angle-btn" data-deg="45">45°</button>
+                                                <button class="quick-angle-btn" data-deg="60">60°</button>
+                                                <button class="quick-angle-btn" data-deg="90">90°</button>
+                                                <button class="quick-angle-btn" data-deg="180">180°</button>
+                                                <button class="quick-angle-btn" data-deg="270">270°</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="trig-readouts-grid">
+                                            <div class="trig-pill-card cos"><span class="trig-pill-label">cos(θ)</span><span class="trig-pill-val" id="val-cos">0.7071</span></div>
+                                            <div class="trig-pill-card sin"><span class="trig-pill-label">sin(θ)</span><span class="trig-pill-val" id="val-sin">0.7071</span></div>
+                                            <div class="trig-pill-card tan"><span class="trig-pill-label">tan(θ)</span><span class="trig-pill-val" id="val-tan">1.0000</span></div>
+                                            <div class="trig-pill-card coord"><span class="trig-pill-label">(x, y)</span><span class="trig-pill-val" id="val-coords">(0.71, 0.71)</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="deck-view" id="view-l2-quad">
+                                    <div class="deck-view-header">
+                                        <div>
+                                            <h2 class="view-title">Quadratic Equation & Polynomial Studio</h2>
+                                            <p class="view-subtitle">Interactive root solver for ax² + bx + c = 0 with discriminant analysis</p>
+                                        </div>
+                                        <span class="status-badge-neo pass" id="quad-root-badge">2 REAL ROOTS</span>
+                                    </div>
+
+                                    <div class="quad-inputs-row">
+                                        <div class="coeff-group"><label>a =</label><input type="number" id="quad-a" class="coeff-input" value="1" step="any" /></div>
+                                        <div class="coeff-group"><label>b =</label><input type="number" id="quad-b" class="coeff-input" value="-5" step="any" /></div>
+                                        <div class="coeff-group"><label>c =</label><input type="number" id="quad-c" class="coeff-input" value="6" step="any" /></div>
+                                        <button class="action-sm-btn" id="btn-solve-quad">Solve & Plot</button>
+                                    </div>
+
+                                    <div class="quad-results-grid">
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Discriminant Δ = b² − 4ac</span></div><div class="quad-big-val" id="quad-disc-val">Δ = 1.0000</div><p class="diag-card-msg">Two distinct real solutions.</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Roots x₁ and x₂</span></div><div class="quad-big-val" id="quad-roots-val">x₁ = 3, x₂ = 2</div><p class="diag-card-msg" id="quad-factor-msg">(x − 3)(x − 2) = 0</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Parabola Vertex</span></div><div class="quad-big-val" id="quad-vertex-val">(2.50, −0.25)</div><p class="diag-card-msg">Minimum at y = −0.25</p></div>
+                                    </div>
+                                    <div class="mini-parabola-box"><canvas id="quad-parabola-canvas"></canvas></div>
+                                </div>
+
+                                <div class="deck-view" id="view-l2-complex">
+                                    <div class="deck-view-header">
+                                        <div>
+                                            <h2 class="view-title">Complex Number Argand Plane (z = a + bi)</h2>
+                                            <p class="view-subtitle">Vector in ℂ with modulus |z| and polar phase θ = Arg(z)</p>
+                                        </div>
+                                        <div class="complex-input-group">
+                                            <span>z =</span><input type="number" id="complex-re" class="mini-input" value="3" />
+                                            <span>+</span><input type="number" id="complex-im" class="mini-input" value="4" /><span>i</span>
+                                            <button class="action-sm-btn" id="btn-update-complex">Plot</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="argand-canvas-box"><canvas id="argand-canvas"></canvas></div>
+                                    <div class="trig-readouts-grid">
+                                        <div class="trig-pill-card"><span class="trig-pill-label">Modulus |z|</span><span class="trig-pill-val" id="val-complex-mod">5.0000</span></div>
+                                        <div class="trig-pill-card"><span class="trig-pill-label">Phase θ</span><span class="trig-pill-val" id="val-complex-arg">53.13°</span></div>
+                                        <div class="trig-pill-card"><span class="trig-pill-label">Polar Form</span><span class="trig-pill-val" id="val-complex-polar">5 e^(i 0.93)</span></div>
+                                        <div class="trig-pill-card"><span class="trig-pill-label">Conjugate z̄</span><span class="trig-pill-val" id="val-complex-conj">3 − 4i</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="derivation-bottom-card">
+                                <div class="derivation-header">
+                                    <span class="section-kicker">PAGE 2 DERIVATION & TRIG STEPS</span>
+                                    <button class="copy-link-btn" data-copy-deriv="2">Copy Result</button>
+                                </div>
+                                <div class="derivation-steps-list page-deriv-list" data-level="2"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     PAGE 3 SLIDE: L3 CALCULUS STUDIO
+                     ============================================== -->
+                <div class="studio-page-slide" id="slide-l3" data-level="3">
+                    <div class="main-layout">
+                        <!-- Left: L3 Handheld Device -->
+                        <div class="calc-device-frame">
+                            <div class="device-sensor-bar">
+                                <span class="sensor-dot"></span>
+                                <span class="speaker-slit"></span>
+                            </div>
+
+                            <div class="screen-device-header">
+                                <div class="screen-pill-tabs">
+                                    <button class="screen-pill-tab active">STANDARD</button>
+                                    <button class="screen-pill-tab" data-toggle-history="3">HISTORY</button>
+                                </div>
+                                <div class="screen-sub-pills">
+                                    <span class="mini-pill">DIFF/INT</span>
+                                    <span class="mini-pill green">READY</span>
+                                </div>
+                            </div>
+
+                            <div class="calc-screen">
+                                <div class="screen-mode-tag"><span class="badge-dot">●</span> 3. CALCULUS</div>
+                                <div class="screen-input-row">
+                                    <input type="text" class="screen-math-input page-input" data-level="3" value="diff:x^3 - 4*x,2" autocomplete="off" spellcheck="false" />
+                                    <button class="screen-eval-icon page-eval-btn" data-level="3" title="Compute">↵</button>
+                                </div>
+                                <div class="screen-result-line page-result" data-level="3">8.000000</div>
+                                <div class="screen-katex-line page-katex" data-level="3">$$\frac{d}{dx}(x^3 - 4x) \text{ at } x=2$$</div>
+                            </div>
+
+                            <div class="device-keypad-scroll">
+                                <div class="keypad-row action-row">
+                                    <button class="neo-key key-clear page-key-c" data-level="3">C</button>
+                                    <button class="neo-key key-clear-entry page-key-ce" data-level="3">CE</button>
+                                    <button class="neo-key key-back page-key-back" data-level="3">⌫</button>
+                                    <button class="neo-key key-op" data-insert=" * " data-level="3">×</button>
+                                </div>
+
+                                <div class="keypad-grid num-grid">
+                                    <button class="neo-key key-num" data-insert="7" data-level="3">7</button>
+                                    <button class="neo-key key-num" data-insert="8" data-level="3">8</button>
+                                    <button class="neo-key key-num" data-insert="9" data-level="3">9</button>
+                                    <button class="neo-key key-op" data-insert=" / " data-level="3">÷</button>
+
+                                    <button class="neo-key key-num" data-insert="4" data-level="3">4</button>
+                                    <button class="neo-key key-num" data-insert="5" data-level="3">5</button>
+                                    <button class="neo-key key-num" data-insert="6" data-level="3">6</button>
+                                    <button class="neo-key key-op" data-insert=" - " data-level="3">−</button>
+
+                                    <button class="neo-key key-num" data-insert="1" data-level="3">1</button>
+                                    <button class="neo-key key-num" data-insert="2" data-level="3">2</button>
+                                    <button class="neo-key key-num" data-insert="3" data-level="3">3</button>
+                                    <button class="neo-key key-op key-plus-tall" data-insert=" + " data-level="3">+</button>
+
+                                    <button class="neo-key key-num" data-insert="0" data-level="3">0</button>
+                                    <button class="neo-key key-num" data-insert="." data-level="3">.</button>
+                                    <button class="neo-key key-equals page-key-equals" data-level="3">=</button>
+                                </div>
+
+                                <div class="section-title">CALCULUS OPERATORS</div>
+                                <div class="keypad-grid aux-grid">
+                                    <button class="neo-key key-calc" data-insert="diff:x^3 - 4*x,2" data-level="3">d/dx</button>
+                                    <button class="neo-key key-calc" data-insert="integ:x^2,0,2" data-level="3">∫ dx</button>
+                                    <button class="neo-key key-calc" data-insert="lim:sin(x)/x,0" data-level="3">lim</button>
+                                    <button class="neo-key key-fn" data-insert="x^3" data-level="3">x³</button>
+                                    <button class="neo-key key-fn" data-insert="e^(-x^2)" data-level="3">e⁻ˣ²</button>
+                                    <button class="neo-key key-fn" data-insert="sin(x)" data-level="3">sin(x)</button>
+                                    <button class="neo-key key-fn" data-insert="cos(x)" data-level="3">cos(x)</button>
+                                    <button class="neo-key key-fn" data-insert="1/x" data-level="3">1/x</button>
+                                </div>
+                            </div>
+
+                            <div class="device-presets-bar">
+                                <span class="presets-label">PAGE 3 PRESETS:</span>
+                                <div class="preset-chips-scroll page-presets" data-level="3"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: L3 Interactive Studio Deck -->
+                        <div class="interactive-deck-container">
+                            <div class="deck-tabs-bar" role="tablist">
+                                <button class="deck-tab-btn active" data-view="l3-grapher">
+                                    <span class="tab-icon">📈</span>
+                                    <span class="tab-name">2D FUNCTION & TANGENT GRAPHER</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l3-rules">
+                                    <span class="tab-icon">📐</span>
+                                    <span class="tab-name">CALCULUS RULES EXPLORER</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l3-riemann">
+                                    <span class="tab-icon">〰️</span>
+                                    <span class="tab-name">RIEMANN SUMS VISUALIZER</span>
+                                </button>
+                            </div>
+
+                            <div class="deck-body-card">
+                                <div class="deck-view active" id="view-l3-grapher">
+                                    <div class="deck-view-header">
+                                        <div>
+                                            <h2 class="view-title">2D Calculus Function & Area Grapher</h2>
+                                            <p class="view-subtitle">Visualizes functions, tangent line derivatives f'(x₀), and definite integrals ∫ f(x) dx</p>
+                                        </div>
+                                        <div class="graph-info-badge" id="grapher-info-badge">f(x) = x² − 4</div>
+                                    </div>
+
+                                    <div class="grapher-canvas-box">
+                                        <canvas id="grapher-canvas"></canvas>
+                                        <div class="canvas-drag-hint">Scroll to zoom • Drag to pan</div>
+                                    </div>
+
+                                    <div class="grapher-controls-toolbar">
+                                        <div class="grapher-fn-row">
+                                            <span class="toolbar-label">f(x) =</span>
+                                            <input type="text" id="grapher-func-input" class="screen-math-input" value="x^2 - 4" />
+                                            <button class="action-sm-btn" id="btn-plot-func">Plot</button>
+                                        </div>
+                                        <div class="grapher-actions-row">
+                                            <button class="action-sm-btn" id="btn-tangent-toggle">Toggle Tangent</button>
+                                            <button class="action-sm-btn" id="btn-integral-toggle">Shade Integral</button>
+                                            <button class="action-sm-btn" id="btn-graph-reset">Reset View</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="deck-view" id="view-l3-rules">
+                                    <div class="deck-view-header">
+                                        <div><h2 class="view-title">Calculus Step-by-Step Rules Explorer</h2><p class="view-subtitle">Analytical theorems & derivative rules</p></div>
+                                    </div>
+                                    <div class="neo-diag-grid">
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Power Rule</span><span class="diag-badge-pill pass">DERIVATIVE</span></div><div class="math-rule-formula">d/dx [xⁿ] = n · xⁿ⁻¹</div><p class="diag-card-msg">Example: d/dx [x⁴] = 4x³</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Product Rule</span><span class="diag-badge-pill pass">DERIVATIVE</span></div><div class="math-rule-formula">d/dx [u · v] = u'v + uv'</div><p class="diag-card-msg">Example: d/dx [x · sin(x)] = sin(x) + x cos(x)</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Chain Rule</span><span class="diag-badge-pill pass">COMPOSITION</span></div><div class="math-rule-formula">d/dx [f(g(x))] = f'(g(x)) · g'(x)</div><p class="diag-card-msg">Example: d/dx [sin(x²)] = 2x cos(x²)</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Fundamental Theorem</span><span class="diag-badge-pill pass">INTEGRAL</span></div><div class="math-rule-formula">∫ₐᵇ f(x) dx = F(b) − F(a)</div><p class="diag-card-msg">Accumulated area under curve</p></div>
+                                    </div>
+                                </div>
+
+                                <div class="deck-view" id="view-l3-riemann">
+                                    <div class="deck-view-header">
+                                        <div><h2 class="view-title">Riemann Sums Area Approximation</h2><p class="view-subtitle">Approximates ∫ₐᵇ f(x) dx with N rectangles</p></div>
+                                        <div class="bloch-angles-badge"><span>Area ≈ <strong id="riemann-area-val">2.6667</strong></span><span>Exact = <strong>2.6667</strong></span></div>
+                                    </div>
+                                    <div class="riemann-canvas-box"><canvas id="riemann-canvas"></canvas></div>
+                                    <div class="riemann-controls-bar">
+                                        <div class="slider-control-row">
+                                            <span class="slider-label">Subdivisions (N):</span>
+                                            <input type="range" id="riemann-n-slider" min="2" max="50" value="10" class="neo-slider" />
+                                            <span id="riemann-n-display" class="slider-val-badge">N = 10</span>
+                                        </div>
+                                        <div class="riemann-method-group">
+                                            <button class="neo-pill-btn active" data-method="midpoint" id="btn-riemann-mid">Midpoint</button>
+                                            <button class="neo-pill-btn" data-method="left" id="btn-riemann-left">Left</button>
+                                            <button class="neo-pill-btn" data-method="right" id="btn-riemann-right">Right</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="derivation-bottom-card">
+                                <div class="derivation-header">
+                                    <span class="section-kicker">PAGE 3 DERIVATION & CALCULUS STEPS</span>
+                                    <button class="copy-link-btn" data-copy-deriv="3">Copy Result</button>
+                                </div>
+                                <div class="derivation-steps-list page-deriv-list" data-level="3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     PAGE 4 SLIDE: L4 MATRICES STUDIO
+                     ============================================== -->
+                <div class="studio-page-slide" id="slide-l4" data-level="4">
+                    <div class="main-layout">
+                        <!-- Left: L4 Handheld Device -->
+                        <div class="calc-device-frame">
+                            <div class="device-sensor-bar">
+                                <span class="sensor-dot"></span>
+                                <span class="speaker-slit"></span>
+                            </div>
+
+                            <div class="screen-device-header">
+                                <div class="screen-pill-tabs">
+                                    <button class="screen-pill-tab active">STANDARD</button>
+                                    <button class="screen-pill-tab" data-toggle-history="4">HISTORY</button>
+                                </div>
+                                <div class="screen-sub-pills">
+                                    <span class="mini-pill">MAT/LIN</span>
+                                    <span class="mini-pill green">READY</span>
+                                </div>
+                            </div>
+
+                            <div class="calc-screen">
+                                <div class="screen-mode-tag"><span class="badge-dot">●</span> 4. MATRICES</div>
+                                <div class="screen-input-row">
+                                    <input type="text" class="screen-math-input page-input" data-level="4" value="mat_det:[[1, 2], [3, 4]]" autocomplete="off" spellcheck="false" />
+                                    <button class="screen-eval-icon page-eval-btn" data-level="4" title="Compute">↵</button>
+                                </div>
+                                <div class="screen-result-line page-result" data-level="4">-2</div>
+                                <div class="screen-katex-line page-katex" data-level="4">$$\det \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$$</div>
+                            </div>
+
+                            <div class="device-keypad-scroll">
+                                <div class="keypad-row action-row">
+                                    <button class="neo-key key-clear page-key-c" data-level="4">C</button>
+                                    <button class="neo-key key-clear-entry page-key-ce" data-level="4">CE</button>
+                                    <button class="neo-key key-back page-key-back" data-level="4">⌫</button>
+                                    <button class="neo-key key-op" data-insert=" * " data-level="4">×</button>
+                                </div>
+
+                                <div class="keypad-grid num-grid">
+                                    <button class="neo-key key-num" data-insert="7" data-level="4">7</button>
+                                    <button class="neo-key key-num" data-insert="8" data-level="4">8</button>
+                                    <button class="neo-key key-num" data-insert="9" data-level="4">9</button>
+                                    <button class="neo-key key-op" data-insert=" / " data-level="4">÷</button>
+
+                                    <button class="neo-key key-num" data-insert="4" data-level="4">4</button>
+                                    <button class="neo-key key-num" data-insert="5" data-level="4">5</button>
+                                    <button class="neo-key key-num" data-insert="6" data-level="4">6</button>
+                                    <button class="neo-key key-op" data-insert=" - " data-level="4">−</button>
+
+                                    <button class="neo-key key-num" data-insert="1" data-level="4">1</button>
+                                    <button class="neo-key key-num" data-insert="2" data-level="4">2</button>
+                                    <button class="neo-key key-num" data-insert="3" data-level="4">3</button>
+                                    <button class="neo-key key-op key-plus-tall" data-insert=" + " data-level="4">+</button>
+
+                                    <button class="neo-key key-num" data-insert="0" data-level="4">0</button>
+                                    <button class="neo-key key-num" data-insert="." data-level="4">.</button>
+                                    <button class="neo-key key-equals page-key-equals" data-level="4">=</button>
+                                </div>
+
+                                <div class="section-title">MATRIX OPERATORS</div>
+                                <div class="keypad-grid aux-grid">
+                                    <button class="neo-key key-mat" data-insert="mat_det:[[1, 2], [3, 4]]" data-level="4">det(A)</button>
+                                    <button class="neo-key key-mat" data-insert="mat_inv:[[4, 7], [2, 6]]" data-level="4">A⁻¹</button>
+                                    <button class="neo-key key-mat" data-insert="mat_eigen:[[2, 1], [1, 2]]" data-level="4">λ(Eigen)</button>
+                                    <button class="neo-key key-mat" data-insert="mat_tr:[[5, -1], [3, 2]]" data-level="4">Tr(A)</button>
+                                    <button class="neo-key key-mat" data-insert="mat_mul:[[1, 2], [3, 4]]*[[2, 0], [1, 2]]" data-level="4">A × B</button>
+                                    <button class="neo-key key-fn" data-insert="[[1, 0], [0, 1]]" data-level="4">Identity</button>
+                                    <button class="neo-key key-fn" data-insert="[[0, -i], [i, 0]]" data-level="4">Hermitian</button>
+                                    <button class="neo-key key-fn" data-insert="[[1, 2], [3, 4]]" data-level="4">2×2 Matrix</button>
+                                </div>
+                            </div>
+
+                            <div class="device-presets-bar">
+                                <span class="presets-label">PAGE 4 PRESETS:</span>
+                                <div class="preset-chips-scroll page-presets" data-level="4"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: L4 Interactive Studio Deck -->
+                        <div class="interactive-deck-container">
+                            <div class="deck-tabs-bar" role="tablist">
+                                <button class="deck-tab-btn active" data-view="l4-workbench">
+                                    <span class="tab-icon">🔲</span>
+                                    <span class="tab-name">MATRIX WORKBENCH</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l4-transform">
+                                    <span class="tab-icon">🔄</span>
+                                    <span class="tab-name">2D LINEAR TRANSFORMATION</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l4-eigen">
+                                    <span class="tab-icon">🎯</span>
+                                    <span class="tab-name">EIGENVALUES & EIGENSPACES</span>
+                                </button>
+                            </div>
+
+                            <div class="deck-body-card">
+                                <div class="deck-view active" id="view-l4-workbench">
+                                    <div class="deck-view-header">
+                                        <div><h2 class="view-title">Matrix Workbench & Operations Engine</h2><p class="view-subtitle">Interactive matrix editor with determinants, inverses, and matrix products</p></div>
+                                        <span class="status-badge-neo pass" id="mat-invertible-badge">INVERTIBLE</span>
+                                    </div>
+
+                                    <div class="matrices-editor-row">
+                                        <div class="matrix-card">
+                                            <div class="matrix-card-title">Matrix A (2×2)</div>
+                                            <div class="matrix-2x2-grid">
+                                                <input type="number" id="mat-a-00" class="matrix-cell" value="1" />
+                                                <input type="number" id="mat-a-01" class="matrix-cell" value="2" />
+                                                <input type="number" id="mat-a-10" class="matrix-cell" value="3" />
+                                                <input type="number" id="mat-a-11" class="matrix-cell" value="4" />
+                                            </div>
+                                            <div class="matrix-presets-chips">
+                                                <button class="matrix-preset-chip" data-preset="id">Identity</button>
+                                                <button class="matrix-preset-chip" data-preset="rot45">Rot 45°</button>
+                                                <button class="matrix-preset-chip" data-preset="shear">Shear</button>
+                                                <button class="matrix-preset-chip" data-preset="refl">Reflect</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="matrix-ops-center">
+                                            <button class="matrix-op-btn active" id="btn-mat-calc-all">Compute All</button>
+                                            <button class="matrix-op-btn" id="btn-mat-mul-ab">A × B</button>
+                                            <button class="matrix-op-btn" id="btn-mat-add-ab">A + B</button>
+                                            <button class="matrix-op-btn" id="btn-mat-sub-ab">A − B</button>
+                                        </div>
+
+                                        <div class="matrix-card">
+                                            <div class="matrix-card-title">Matrix B (2×2)</div>
+                                            <div class="matrix-2x2-grid">
+                                                <input type="number" id="mat-b-00" class="matrix-cell" value="2" />
+                                                <input type="number" id="mat-b-01" class="matrix-cell" value="0" />
+                                                <input type="number" id="mat-b-10" class="matrix-cell" value="1" />
+                                                <input type="number" id="mat-b-11" class="matrix-cell" value="2" />
+                                            </div>
+                                            <div class="matrix-presets-chips">
+                                                <button class="matrix-preset-chip" data-preset-b="id">Identity</button>
+                                                <button class="matrix-preset-chip" data-preset-b="pauliX">Pauli X</button>
+                                                <button class="matrix-preset-chip" data-preset-b="pauliZ">Pauli Z</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="neo-diag-grid">
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Determinant det(A)</span></div><div class="quad-big-val" id="val-mat-det">-2.0000</div><p class="diag-card-msg">(1)(4) − (2)(3) = −2</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Inverse Matrix A⁻¹</span></div><div class="matrix-inline-repr" id="val-mat-inv">[[-2.0, 1.0], [1.5, -0.5]]</div><p class="diag-card-msg">A · A⁻¹ = I</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Trace Tr(A)</span></div><div class="quad-big-val" id="val-mat-tr">5.0000</div><p class="diag-card-msg">1 + 4 = 5</p></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Product Result (A × B)</span></div><div class="matrix-inline-repr" id="val-mat-prod">[[4, 4], [10, 8]]</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="deck-view" id="view-l4-transform">
+                                    <div class="deck-view-header">
+                                        <div><h2 class="view-title">2D Linear Transformation Grid Visualizer</h2><p class="view-subtitle">Visualizes how Matrix A transforms the Cartesian plane, basis vectors î and ĵ</p></div>
+                                        <div class="bloch-angles-badge"><span>î' = <strong id="trans-i-val">[1, 3]</strong></span><span>ĵ' = <strong id="trans-j-val">[2, 4]</strong></span><span>Area = <strong id="trans-area-val">|det| = 2</strong></span></div>
+                                    </div>
+                                    <div class="transform-canvas-box"><canvas id="transform-canvas"></canvas><div class="canvas-drag-hint">Cyan = î', Coral = ĵ'</div></div>
+                                </div>
+
+                                <div class="deck-view" id="view-l4-eigen">
+                                    <div class="deck-view-header"><div><h2 class="view-title">Eigenvalues & Invariant Eigenspaces</h2><p class="view-subtitle">Directions where transformation acts as simple scaling: A v = λ v</p></div></div>
+                                    <div class="neo-diag-grid">
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Characteristic Equation</span></div><div class="math-rule-formula" id="val-char-poly">λ² − 5.00λ − 2.00 = 0</div></div>
+                                        <div class="diag-card"><div class="diag-card-top"><span class="diag-card-title">Eigenvalues (λ₁, λ₂)</span></div><div class="quad-big-val" id="val-eigenvalues">λ₁ = 5.3723, λ₂ = -0.3723</div></div>
+                                    </div>
+                                    <div class="eigen-canvas-box"><canvas id="eigen-canvas"></canvas></div>
+                                </div>
+                            </div>
+
+                            <div class="derivation-bottom-card">
+                                <div class="derivation-header">
+                                    <span class="section-kicker">PAGE 4 DERIVATION & MATRIX STEPS</span>
+                                    <button class="copy-link-btn" data-copy-deriv="4">Copy Result</button>
+                                </div>
+                                <div class="derivation-steps-list page-deriv-list" data-level="4"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==============================================
+                     PAGE 5 SLIDE: L5 QUANTUM & DEBUG STUDIO
+                     ============================================== -->
+                <div class="studio-page-slide" id="slide-l5" data-level="5">
+                    <div class="main-layout">
+                        <!-- Left: L5 Handheld Device -->
+                        <div class="calc-device-frame">
+                            <div class="device-sensor-bar">
+                                <span class="sensor-dot"></span>
+                                <span class="speaker-slit"></span>
+                            </div>
+
+                            <div class="screen-device-header">
+                                <div class="screen-pill-tabs">
+                                    <button class="screen-pill-tab active">STANDARD</button>
+                                    <button class="screen-pill-tab" data-toggle-history="5">HISTORY</button>
+                                </div>
+                                <div class="screen-sub-pills">
+                                    <span class="mini-pill">Q-DEBUG</span>
+                                    <span class="mini-pill green">READY</span>
+                                </div>
+                            </div>
+
+                            <div class="calc-screen">
+                                <div class="screen-mode-tag"><span class="badge-dot">●</span> 5. QUANTUM & DEBUG</div>
+                                <div class="screen-input-row">
+                                    <input type="text" class="screen-math-input page-input" data-level="5" value="q_debug_state:[1, 2]" autocomplete="off" spellcheck="false" />
+                                    <button class="screen-eval-icon page-eval-btn" data-level="5" title="Compute">↵</button>
+                                </div>
+                                <div class="screen-result-line page-result" data-level="5">UNNORMALIZED</div>
+                                <div class="screen-katex-line page-katex" data-level="5">$$|0\rangle + 2|1\rangle$$</div>
+                            </div>
+
+                            <div class="device-keypad-scroll">
+                                <div class="keypad-row action-row">
+                                    <button class="neo-key key-clear page-key-c" data-level="5">C</button>
+                                    <button class="neo-key key-clear-entry page-key-ce" data-level="5">CE</button>
+                                    <button class="neo-key key-back page-key-back" data-level="5">⌫</button>
+                                    <button class="neo-key key-op" data-insert=" * " data-level="5">×</button>
+                                </div>
+
+                                <div class="keypad-grid num-grid">
+                                    <button class="neo-key key-num" data-insert="7" data-level="5">7</button>
+                                    <button class="neo-key key-num" data-insert="8" data-level="5">8</button>
+                                    <button class="neo-key key-num" data-insert="9" data-level="5">9</button>
+                                    <button class="neo-key key-op" data-insert=" / " data-level="5">÷</button>
+
+                                    <button class="neo-key key-num" data-insert="4" data-level="5">4</button>
+                                    <button class="neo-key key-num" data-insert="5" data-level="5">5</button>
+                                    <button class="neo-key key-num" data-insert="6" data-level="5">6</button>
+                                    <button class="neo-key key-op" data-insert=" - " data-level="5">−</button>
+
+                                    <button class="neo-key key-num" data-insert="1" data-level="5">1</button>
+                                    <button class="neo-key key-num" data-insert="2" data-level="5">2</button>
+                                    <button class="neo-key key-num" data-insert="3" data-level="5">3</button>
+                                    <button class="neo-key key-op key-plus-tall" data-insert=" + " data-level="5">+</button>
+
+                                    <button class="neo-key key-num" data-insert="0" data-level="5">0</button>
+                                    <button class="neo-key key-num" data-insert="." data-level="5">.</button>
+                                    <button class="neo-key key-equals page-key-equals" data-level="5">=</button>
+                                </div>
+
+                                <div class="section-title">QUANTUM OPERATORS & DEBUG</div>
+                                <div class="keypad-grid aux-grid">
+                                    <button class="neo-key key-q" data-insert="|0>" data-level="5">|0⟩</button>
+                                    <button class="neo-key key-q" data-insert="|1>" data-level="5">|1⟩</button>
+                                    <button class="neo-key key-q" data-insert="|->" data-level="5">|−⟩</button>
+                                    <button class="neo-key key-q" data-insert="|+>" data-level="5">|+⟩</button>
+                                    <button class="neo-key key-q" data-insert="q_debug_op:[[0, 1], [1, 0]]" data-level="5">σ_x</button>
+                                    <button class="neo-key key-q" data-insert="q_debug_op:[[0, -i], [i, 0]]" data-level="5">σ_y</button>
+                                    <button class="neo-key key-q" data-insert="q_debug_op:[[1, 0], [0, -1]]" data-level="5">σ_z</button>
+                                    <button class="neo-key key-q" data-insert="q_debug_op:Hadamard" data-level="5">H</button>
+                                    <button class="neo-key key-q" data-insert="q_comm:sigmaX,sigmaY" data-level="5">[A, B]</button>
+                                    <button class="neo-key key-q" data-insert="q_exp:sigmaZ,[0.7071, 0.7071]" data-level="5">⟨ψ|O|ψ⟩</button>
+                                    <button class="neo-key key-q-debug" data-insert="q_debug_state:[1, 2]" data-level="5">DEBUG |ψ⟩</button>
+                                    <button class="neo-key key-q-debug" data-insert="q_debug_op:[[1, i], [i, 2]]" data-level="5">DEBUG Ĥ</button>
+                                    <button class="neo-key key-q" data-insert="q_bell" data-level="5">Bell</button>
+                                    <button class="neo-key key-fn" data-insert="ħ" data-level="5">ħ</button>
+                                </div>
+                            </div>
+
+                            <div class="device-presets-bar">
+                                <span class="presets-label">PAGE 5 PRESETS:</span>
+                                <div class="preset-chips-scroll page-presets" data-level="5"></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: L5 Interactive Studio Deck -->
+                        <div class="interactive-deck-container">
+                            <div class="deck-tabs-bar" role="tablist">
+                                <button class="deck-tab-btn active" data-view="l5-bloch">
+                                    <span class="tab-icon">🌐</span>
+                                    <span class="tab-name">3D BLOCH SPHERE</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l5-debugger">
+                                    <span class="tab-icon">🔬</span>
+                                    <span class="tab-name">QUANTUM DEBUGGER</span>
+                                </button>
+                                <button class="deck-tab-btn" data-view="l5-wave">
+                                    <span class="tab-icon">🌊</span>
+                                    <span class="tab-name">1D SCHRÖDINGER WAVE</span>
+                                </button>
+                            </div>
+
+                            <div class="deck-body-card">
+                                <div class="deck-view active" id="view-l5-bloch">
+                                    <div class="deck-view-header">
+                                        <div><h2 class="view-title">3D Qubit Bloch Sphere</h2><p class="view-subtitle">Interactive state vector on the unit sphere S²: |ψ⟩ = cos(θ/2)|0⟩ + e^(iφ)sin(θ/2)|1⟩</p></div>
+                                        <div class="bloch-angles-badge"><span>θ = <strong id="bloch-theta-text">60°</strong></span><span>φ = <strong id="bloch-phi-text">45°</strong></span></div>
+                                    </div>
+                                    <div class="bloch-canvas-box"><canvas id="bloch-canvas"></canvas><div class="canvas-drag-hint">Click & Drag mouse to rotate 3D view</div></div>
+                                    <div class="bloch-action-toolbar">
+                                        <span class="toolbar-label">APPLY QUANTUM GATES:</span>
+                                        <div class="gate-btn-group">
+                                            <button class="neo-gate-btn" data-gate="X">Bit-Flip (X)</button>
+                                            <button class="neo-gate-btn" data-gate="Y">Bit+Phase (Y)</button>
+                                            <button class="neo-gate-btn" data-gate="Z">Phase-Flip (Z)</button>
+                                            <button class="neo-gate-btn highlight" data-gate="H">Hadamard (H)</button>
+                                            <button class="neo-gate-btn" data-gate="S">Phase (S)</button>
+                                            <button class="neo-gate-btn" data-gate="T">T Gate (π/8)</button>
+                                            <button class="neo-gate-btn measure-action" id="bloch-measure-trigger">💥 MEASURE COLLAPSE</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="deck-view" id="view-l5-debugger">
+                                    <div class="deck-view-header">
+                                        <div><h2 class="view-title">Quantum Equation Diagnostic Debugger</h2><p class="view-subtitle">Physical, unitary, and Hermiticity validation engine</p></div>
+                                        <span class="status-badge-neo pass" id="master-debug-badge">ALL CHECKS PASS</span>
+                                    </div>
+                                    <div class="neo-diag-grid">
+                                        <div class="diag-card" id="card-norm"><div class="diag-card-top"><span class="diag-card-title">1. State Normalization</span><span class="diag-badge-pill pass" id="badge-norm">PASS</span></div><p class="diag-card-msg" id="msg-norm">Total norm |||ψ⟩|| = 1.0000</p><button class="autofix-btn-neo" id="btn-autofix-norm" style="display: none;">⚡ 1-Click Auto-Normalize</button></div>
+                                        <div class="diag-card" id="card-herm"><div class="diag-card-top"><span class="diag-card-title">2. Hermiticity (Ĥ = Ĥ†)</span><span class="diag-badge-pill pass" id="badge-herm">PASS</span></div><p class="diag-card-msg" id="msg-herm">Self-adjoint operator verified.</p></div>
+                                        <div class="diag-card" id="card-unit"><div class="diag-card-top"><span class="diag-card-title">3. Unitarity (Û† Û = Î)</span><span class="diag-badge-pill pass" id="badge-unit">PASS</span></div><p class="diag-card-msg" id="msg-unit">Probability conserving evolution.</p></div>
+                                        <div class="diag-card" id="card-comm"><div class="diag-card-top"><span class="diag-card-title">4. Heisenberg Commutator</span><span class="diag-badge-pill pass" id="badge-comm">INFO</span></div><p class="diag-card-msg" id="msg-comm">Uncertainty relation verified.</p></div>
+                                    </div>
+                                    <div class="diag-details-box" id="diag-details-list"><div class="log-entry"><strong>System Ready:</strong> Load a quantum state vector or Hamiltonian matrix to inspect diagnostic traces.</div></div>
+                                </div>
+
+                                <div class="deck-view" id="view-l5-wave">
+                                    <div class="deck-view-header">
+                                        <div><h2 class="view-title">1D Time-Dependent Schrödinger Wave Solver</h2><p class="view-subtitle">Numerical wave propagation: iħ ∂ψ/∂t = (-ħ²/2m ∂²/∂x² + V(x))ψ</p></div>
+                                        <div class="wave-sim-controls">
+                                            <button class="neo-pill-btn active" data-preset="tunneling">Tunneling Barrier</button>
+                                            <button class="neo-pill-btn" data-preset="harmonic">Harmonic Oscillator</button>
+                                            <button class="neo-pill-btn" data-preset="box">Infinite Square Well</button>
+                                            <button class="neo-pill-btn pause-btn" id="wave-pause-trigger">PAUSE</button>
+                                        </div>
+                                    </div>
+                                    <div class="wave-canvas-box"><canvas id="schrodinger-canvas"></canvas></div>
+                                </div>
+                            </div>
+
+                            <div class="derivation-bottom-card">
+                                <div class="derivation-header">
+                                    <span class="section-kicker">PAGE 5 DERIVATION & QUANTUM STEPS</span>
+                                    <button class="copy-link-btn" data-copy-deriv="5">Copy Result</button>
+                                </div>
+                                <div class="derivation-steps-list page-deriv-list" data-level="5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/complex.js"></script>
+    <script src="js/math-engine.js"></script>
+    <script src="js/quantum-engine.js"></script>
+    <script src="js/quantum-debugger.js"></script>
+    <script src="js/grapher.js"></script>
+    <script src="js/bloch-sphere.js"></script>
+    <script src="js/schrodinger-solver.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1880 @@
+/**
+ * QuantumCalc — Neo-Minimalist UI Design
+ * Inspired by tactile pocket handheld devices with chunky borders,
+ * pastel LCD screens, pop colors, and Montserrat typography.
+ */
+
+:root {
+    /* Theme: Light (Default, matching neo-minimalist tactile device) */
+    --bg-page: #f6f5f0;
+    --border-dark: #1e2229;
+    --border-width: 2.5px;
+    --border-thick: 3.5px;
+
+    --text-main: #1e2229;
+    --text-sub: #4b5563;
+    --text-muted: #6b7280;
+
+    /* Calculator Device */
+    --calc-body-bg: #ffffff;
+    --calc-shadow: 6px 8px 0px #1e2229;
+    --card-bg: #ffffff;
+    --card-hover-bg: #f8fafc;
+    --canvas-bg: #f8fafc;
+    --canvas-border: #cbd5e1;
+    --chip-bg: #f1f5f9;
+
+    /* Pastel Screen */
+    --screen-bg: #c5e4fc;
+    --screen-text: #0f172a;
+    --screen-subtext: #334155;
+    --screen-input-bg: rgba(255, 255, 255, 0.7);
+
+    /* Key Colors */
+    --key-num-bg: #ffffff;
+    --key-num-text: #1e2229;
+
+    --key-mint: #52e3a8;       /* Clear / C / CE */
+    --key-mint-text: #064e3b;
+
+    --key-coral: #fb923c;      /* Operators + - * / = */
+    --key-coral-text: #7c2d12;
+
+    --key-salmon: #f87171;     /* Delete / Back */
+    --key-salmon-text: #7f1d1d;
+
+    --key-fn-bg: #e2e8f0;       /* Auxiliary functions */
+    --key-fn-text: #1e293b;
+
+    --key-calc-bg: #a7f3d0;     /* Calculus */
+    --key-calc-text: #065f46;
+
+    --key-mat-bg: #bae6fd;      /* Matrices */
+    --key-mat-text: #0369a1;
+
+    --key-q-bg: #fbcfe8;        /* Quantum */
+    --key-q-text: #831843;
+
+    --key-q-debug: #f472b6;     /* Debug keys */
+    --key-q-debug-text: #ffffff;
+
+    /* Typography */
+    --font-main: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Fira Code', monospace;
+}
+
+/* Dark Theme Overrides */
+:root.dark-theme,
+html.dark-theme,
+body.dark-theme {
+    --bg-page: #0c1017;
+    --border-dark: #374151;
+    --border-width: 2.5px;
+    --border-thick: 3.5px;
+
+    --text-main: #f8fafc;
+    --text-sub: #cbd5e1;
+    --text-muted: #94a3b8;
+
+    --calc-body-bg: #141b26;
+    --calc-shadow: 6px 8px 0px #06090e;
+    --card-bg: #141b26;
+    --card-hover-bg: #1e2636;
+    --canvas-bg: #0b0f17;
+    --canvas-border: #242d3d;
+    --chip-bg: #1f2737;
+
+    --screen-bg: #132a4a;
+    --screen-text: #e2f1fd;
+    --screen-subtext: #93c5fd;
+    --screen-input-bg: rgba(15, 23, 42, 0.6);
+
+    --key-num-bg: #1d2533;
+    --key-num-text: #f8fafc;
+
+    --key-mint: #059669;
+    --key-mint-text: #ecfdf5;
+
+    --key-coral: #ea580c;
+    --key-coral-text: #fff7ed;
+
+    --key-salmon: #dc2626;
+    --key-salmon-text: #fef2f2;
+
+    --key-fn-bg: #273142;
+    --key-fn-text: #e2e8f0;
+
+    --key-calc-bg: #047857;
+    --key-calc-text: #ecfdf5;
+
+    --key-mat-bg: #0284c7;
+    --key-mat-text: #f0f9ff;
+
+    --key-q-bg: #be185d;
+    --key-q-text: #fdf2f8;
+
+    --key-q-debug: #db2777;
+    --key-q-debug-text: #ffffff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-page);
+    font-family: var(--font-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 1.25rem 2rem 2.5rem;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Workspace Wrapper */
+.workspace-wrapper {
+    max-width: 1540px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Top App Bar */
+.top-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 0.5rem 0.5rem 1rem;
+    border-bottom: var(--border-width) solid var(--border-dark);
+}
+
+.brand-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.brand-dot {
+    width: 14px;
+    height: 14px;
+    background: var(--key-coral);
+    border: 2px solid var(--border-dark);
+    border-radius: 50%;
+}
+
+.brand-name {
+    font-size: 1.3rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.brand-name strong {
+    color: var(--key-coral);
+}
+
+.brand-sub {
+    font-size: 0.65rem;
+    font-weight: 800;
+    background: var(--border-dark);
+    color: #ffffff;
+    padding: 0.15rem 0.45rem;
+    border-radius: 6px;
+    letter-spacing: 0.08em;
+}
+
+/* Level Slider & Page Switcher Toolbar */
+.level-slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* Determined Level Switcher Bar */
+.level-selector-bar {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0.35rem;
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 30px;
+}
+
+.level-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: none;
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+
+.pill-badge {
+    background: rgba(0, 0, 0, 0.1);
+    font-size: 0.68rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 10px;
+}
+
+.level-pill:hover {
+    background: rgba(0, 0, 0, 0.08);
+}
+
+.level-pill.active {
+    background: #11141a !important;
+    color: #ffffff !important;
+    box-shadow: 2px 3px 0px rgba(0, 0, 0, 0.4);
+    border: 1px solid #000000;
+}
+
+.level-pill.active .pill-badge {
+    background: var(--key-coral);
+    color: #ffffff;
+    font-weight: 900;
+}
+
+body.dark-theme .level-pill.active {
+    background: #05070a !important;
+    color: #ffffff !important;
+    border: 1.5px solid #4b5563;
+    box-shadow: 0 0 12px rgba(251, 146, 60, 0.25);
+}
+
+/* Pages Horizontal Slider Carousel ("Changes page within pages") */
+.pages-viewport {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.pages-slider-track {
+    display: flex;
+    width: 500%; /* 5 pages */
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.studio-page-slide {
+    width: 20%;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    padding: 0 0.2rem;
+}
+
+.level-pill.all-pill {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+    border: 1.5px solid var(--border-dark);
+}
+
+.level-pill.all-pill.active {
+    background: var(--border-dark);
+    color: var(--key-mint);
+}
+
+/* Theme Toggle Button (Light/Dark in up right corner) */
+.neo-round-btn {
+    width: 44px;
+    height: 44px;
+    background: var(--card-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 3px 3px 0px var(--border-dark);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s, background-color 0.2s;
+    user-select: none;
+}
+
+.neo-round-btn:hover {
+    transform: translateY(-2px) scale(1.08);
+    box-shadow: 4px 5px 0px var(--border-dark);
+    background: var(--key-coral);
+    color: #ffffff;
+}
+
+.neo-round-btn:active {
+    transform: translate(2px, 2px) scale(0.96);
+    box-shadow: 1px 1px 0px var(--border-dark);
+}
+
+body.dark-theme .neo-round-btn {
+    background: #1e2636;
+    border-color: #475569;
+    box-shadow: 3px 3px 0px #030712;
+}
+
+body.dark-theme .neo-round-btn:hover {
+    background: var(--key-coral);
+    border-color: #ea580c;
+    box-shadow: 0 0 15px rgba(234, 88, 12, 0.5);
+}
+
+/* Main Layout Grid */
+.main-layout {
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 1100px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===================================================
+   LEFT: HANDHELD NEO-MINIMALIST CALCULATOR DEVICE
+   =================================================== */
+.calc-device-frame {
+    background: var(--calc-body-bg);
+    border: var(--border-thick) solid var(--border-dark);
+    border-radius: 36px;
+    box-shadow: var(--calc-shadow);
+    padding: 1.6rem 1.4rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+}
+
+.device-sensor-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: -0.3rem;
+}
+
+.sensor-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--border-dark);
+    border-radius: 50%;
+}
+
+.speaker-slit {
+    width: 44px;
+    height: 4.5px;
+    background: var(--border-dark);
+    border-radius: 4px;
+}
+
+/* Pastel Blue Screen */
+/* Screen Header & Top Pills (matching reference image) */
+.screen-device-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 0.2rem;
+}
+
+.device-moon-icon {
+    background: transparent;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.2rem;
+}
+
+.screen-pill-tabs {
+    display: flex;
+    gap: 0.35rem;
+}
+
+.screen-pill-tab {
+    font-family: var(--font-main);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-dark);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.screen-pill-tab#tab-standard {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+}
+
+.screen-pill-tab#tab-history {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+}
+
+.screen-pill-tab:hover {
+    filter: brightness(0.92);
+}
+
+.screen-pill-tab.active {
+    box-shadow: 0 2px 0 var(--border-dark);
+}
+
+/* Pastel Blue Screen with Direct Equation Writing */
+.calc-screen {
+    background: var(--screen-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 20px;
+    padding: 0.9rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+}
+
+.screen-mode-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    background: #11141a;
+    color: #ffffff;
+    padding: 0.25rem 0.65rem;
+    border-radius: 20px;
+    width: fit-content;
+    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+}
+
+.screen-mode-tag .badge-dot {
+    color: var(--key-coral);
+    font-size: 0.65rem;
+}
+
+body.dark-theme .screen-mode-tag {
+    background: #000000;
+    color: #f8fafc;
+    border: 1px solid #334155;
+}
+
+/* Direct Equation Writing Input Line */
+.screen-input-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: rgba(255, 255, 255, 0.45);
+    border: 1.5px solid rgba(0, 0, 0, 0.18);
+    border-radius: 10px;
+    padding: 0.35rem 0.65rem;
+    transition: all 0.15s ease;
+}
+
+.screen-input-row:focus-within {
+    border-color: var(--border-dark);
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 0 0 2.5px rgba(0, 0, 0, 0.1);
+}
+
+.screen-math-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--font-main);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--screen-text);
+    text-align: right;
+    letter-spacing: 0.02em;
+}
+
+.screen-math-input::placeholder {
+    color: rgba(71, 85, 105, 0.55);
+    font-weight: 500;
+    font-size: 0.82rem;
+}
+
+.screen-eval-icon {
+    background: var(--border-dark);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background-color 0.15s;
+}
+
+.screen-eval-icon:hover {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+}
+
+/* Calculated Result Line (Large Bold, matching reference UI) */
+.screen-result-line {
+    font-family: var(--font-main);
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--screen-text);
+    text-align: right;
+    line-height: 1.05;
+    word-break: break-all;
+    user-select: all;
+    letter-spacing: -0.02em;
+    min-height: 2.6rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+/* Live Math KaTeX Preview Line */
+.screen-katex-line {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-height: 26px;
+    font-size: 1.02rem;
+    color: var(--screen-subtext);
+    overflow-x: auto;
+    padding: 0.2rem 0.5rem;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    border: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+/* History Tape Drawer */
+.history-drawer {
+    background: var(--card-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 16px;
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.history-clear-btn {
+    background: transparent;
+    border: 1px solid var(--border-dark);
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.45rem;
+    cursor: pointer;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.35rem 0.5rem;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.03);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.history-item:hover {
+    background: var(--screen-bg);
+}
+
+.history-item .hist-expr {
+    color: var(--screen-subtext);
+}
+
+.history-item .hist-res {
+    font-weight: 800;
+    color: var(--border-dark);
+}
+
+/* Tall + Key in Keypad (matching reference image) */
+.key-plus-tall {
+    grid-row: span 2;
+    background: var(--key-coral) !important;
+    color: var(--key-coral-text) !important;
+    font-size: 1.5rem !important;
+    height: 100% !important;
+}
+
+/* Keypad Scroll Container */
+.device-keypad-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 520px;
+    overflow-y: auto;
+    padding-right: 0.3rem;
+}
+
+.device-keypad-scroll::-webkit-scrollbar {
+    width: 5px;
+}
+.device-keypad-scroll::-webkit-scrollbar-thumb {
+    background: var(--border-dark);
+    border-radius: 4px;
+}
+
+/* Keypad Layouts */
+.keypad-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.55rem;
+}
+
+.keypad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.55rem;
+}
+
+.aux-grid {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.section-title {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--border-dark);
+    margin-top: 0.4rem;
+    padding-left: 0.2rem;
+    opacity: 0.7;
+}
+
+/* Chunky Tactile Neo-Keys */
+.neo-key {
+    background: var(--key-num-bg);
+    color: var(--key-num-text);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 14px;
+    font-family: var(--font-main);
+    font-size: 1.15rem;
+    font-weight: 800;
+    padding: 0.85rem 0.2rem;
+    cursor: pointer;
+    box-shadow: 0 3px 0px var(--border-dark);
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.neo-key:hover {
+    filter: brightness(0.96);
+}
+
+.neo-key:active {
+    transform: translateY(3px);
+    box-shadow: 0 0px 0px var(--border-dark);
+}
+
+/* Key Variants */
+.key-clear {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+}
+
+.key-clear-entry {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+}
+
+.key-back {
+    background: var(--key-salmon);
+    color: var(--key-salmon-text);
+}
+
+.key-op {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+    font-size: 1.35rem;
+}
+
+.key-equals {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+    font-size: 1.4rem;
+}
+
+.key-fn {
+    background: var(--key-fn-bg);
+    color: var(--key-fn-text);
+    font-size: 0.92rem;
+}
+
+.key-calc {
+    background: var(--key-calc-bg);
+    color: var(--key-calc-text);
+    font-size: 0.95rem;
+}
+
+.key-mat {
+    background: var(--key-mat-bg);
+    color: var(--key-mat-text);
+    font-size: 0.88rem;
+}
+
+.key-q {
+    background: var(--key-q-bg);
+    color: var(--key-q-text);
+    font-size: 0.92rem;
+}
+
+.key-q-debug {
+    background: var(--key-q-debug);
+    color: var(--key-q-debug-text);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+}
+
+/* Device Presets Bar */
+.device-presets-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-top: 0.5rem;
+    border-top: var(--border-width) dashed var(--border-dark);
+}
+
+.presets-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--border-dark);
+    opacity: 0.7;
+}
+
+.preset-chips-scroll {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding-bottom: 0.2rem;
+}
+
+.preset-chip-neo {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 20px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--border-dark);
+    padding: 0.3rem 0.65rem;
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 1.5px 2px 0px var(--border-dark);
+    transition: transform 0.1s;
+}
+
+.preset-chip-neo:hover {
+    background: var(--screen-bg);
+}
+
+.preset-chip-neo:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0 0 0;
+}
+
+/* ===================================================
+   RIGHT: INTERACTIVE QUANTUM DECK & VISUALIZERS
+   =================================================== */
+.interactive-deck-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Deck View Selector Tabs */
+.deck-tabs-bar {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.deck-tab-btn {
+    background: var(--card-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 16px;
+    padding: 0.65rem 1.15rem;
+    font-family: var(--font-main);
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--border-dark);
+    cursor: pointer;
+    box-shadow: 3px 3px 0px var(--border-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.15s ease;
+}
+
+.deck-tab-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.deck-tab-btn.active {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+    transform: translate(1px, 1px);
+    box-shadow: 1.5px 1.5px 0px var(--border-dark);
+}
+
+/* Deck Body Card */
+.deck-body-card {
+    background: var(--card-bg);
+    border: var(--border-thick) solid var(--border-dark);
+    border-radius: 28px;
+    box-shadow: var(--calc-shadow);
+    padding: 1.6rem;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+}
+
+.deck-view {
+    display: none;
+    flex-direction: column;
+    gap: 1.25rem;
+    height: 100%;
+}
+
+.deck-view.active {
+    display: flex;
+}
+
+.deck-view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: var(--border-width) solid var(--border-dark);
+}
+
+.view-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+}
+
+.view-subtitle {
+    font-size: 0.76rem;
+    font-weight: 500;
+    opacity: 0.75;
+    margin-top: 0.15rem;
+}
+
+/* 3D Bloch Canvas Box */
+.bloch-canvas-box {
+    position: relative;
+    width: 100%;
+    height: 330px;
+    background: #090c14;
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.canvas-drag-hint {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 0.2rem 0.55rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bloch-angles-badge {
+    background: var(--screen-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 12px;
+    padding: 0.35rem 0.8rem;
+    font-size: 0.82rem;
+    display: flex;
+    gap: 0.85rem;
+    color: var(--screen-text);
+}
+
+/* Gate Buttons Toolbar */
+.bloch-action-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.toolbar-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.gate-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.neo-gate-btn {
+    background: var(--card-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 10px;
+    font-family: var(--font-main);
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--border-dark);
+    padding: 0.55rem 0.95rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-dark);
+    transition: all 0.1s;
+}
+
+.neo-gate-btn:hover {
+    background: var(--key-fn-bg);
+}
+
+.neo-gate-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0 0 0;
+}
+
+.neo-gate-btn.highlight {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+}
+
+.neo-gate-btn.measure-action {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+    font-weight: 900;
+}
+
+/* ===================================================
+   QUANTUM EQUATION DIAGNOSTIC DEBUGGER VIEW
+   =================================================== */
+.status-badge-neo {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.35rem 0.8rem;
+    border-radius: 10px;
+    border: var(--border-width) solid var(--border-dark);
+}
+
+.status-badge-neo.pass {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+}
+
+.status-badge-neo.fail {
+    background: var(--key-salmon);
+    color: var(--key-salmon-text);
+}
+
+.neo-diag-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .neo-diag-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.diag-card {
+    background: rgba(0, 0, 0, 0.02);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.diag-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.diag-card-title {
+    font-size: 0.84rem;
+    font-weight: 800;
+}
+
+.diag-badge-pill {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.12rem 0.45rem;
+    border-radius: 6px;
+    border: 1.5px solid var(--border-dark);
+}
+
+.diag-badge-pill.pass {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+}
+
+.diag-badge-pill.fail {
+    background: var(--key-salmon);
+    color: var(--key-salmon-text);
+}
+
+.diag-card-msg {
+    font-size: 0.76rem;
+    line-height: 1.35;
+    opacity: 0.8;
+}
+
+.autofix-btn-neo {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 0.4rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-dark);
+    margin-top: 0.35rem;
+    align-self: flex-start;
+}
+
+.autofix-btn-neo:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0 0 0;
+}
+
+.diag-details-box {
+    background: rgba(0, 0, 0, 0.03);
+    border: var(--border-width) dashed var(--border-dark);
+    border-radius: 14px;
+    padding: 0.9rem 1.15rem;
+    font-size: 0.82rem;
+    line-height: 1.45;
+}
+
+/* Wave Mechanics & Grapher Boxes */
+.wave-canvas-box, .grapher-canvas-box {
+    position: relative;
+    width: 100%;
+    height: 330px;
+    background: #090c14;
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.wave-sim-controls {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.neo-pill-btn {
+    background: var(--card-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 0.35rem 0.65rem;
+    cursor: pointer;
+}
+
+.neo-pill-btn.active {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+}
+
+.neo-pill-btn.pause-btn {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+}
+
+.graph-info-badge {
+    background: var(--screen-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 8px;
+    padding: 0.25rem 0.6rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* Bottom Derivation Card */
+.derivation-bottom-card {
+    background: var(--card-bg);
+    border: var(--border-thick) solid var(--border-dark);
+    border-radius: 24px;
+    box-shadow: var(--calc-shadow);
+    padding: 1.25rem 1.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.derivation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-kicker {
+    font-size: 0.74rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: var(--border-dark);
+}
+
+.copy-link-btn {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 8px;
+    font-family: var(--font-main);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    cursor: pointer;
+    box-shadow: 1.5px 1.5px 0px var(--border-dark);
+}
+
+.derivation-steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.derivation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.84rem;
+    line-height: 1.4;
+}
+
+.step-badge {
+    width: 22px;
+    height: 22px;
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ===================================================
+   MULTI-PAGE STUDIO DECKS ARCHITECTURE (L1 - L5)
+   =================================================== */
+.page-studio-deck {
+    display: none;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.page-studio-deck.active {
+    display: flex;
+    animation: fadeInPage 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* General Action Buttons */
+.action-sm-btn {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 10px;
+    font-family: var(--font-main);
+    font-size: 0.74rem;
+    font-weight: 800;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-dark);
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+    white-space: nowrap;
+}
+
+.action-sm-btn:hover {
+    background: var(--card-hover-bg);
+}
+
+.action-sm-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0 0 0;
+}
+
+.action-sm-btn.danger {
+    background: var(--key-salmon);
+    color: var(--key-salmon-text);
+}
+
+.deck-actions-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ===================================================
+   L1 ARITHMETIC STUDIO STYLES
+   =================================================== */
+.ledger-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-mini-card {
+    background: var(--chip-bg);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-mini-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.stat-mini-val {
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--text-main);
+    font-family: var(--font-mono);
+}
+
+.ledger-table-container {
+    background: var(--card-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 16px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.neo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+.neo-table th {
+    background: var(--chip-bg);
+    color: var(--text-main);
+    font-weight: 800;
+    padding: 0.65rem 0.85rem;
+    border-bottom: 1.5px solid var(--border-dark);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.neo-table td {
+    padding: 0.6rem 0.85rem;
+    border-bottom: 1px solid var(--canvas-border);
+    color: var(--text-main);
+}
+
+.neo-table tr:hover {
+    background: var(--card-hover-bg);
+}
+
+.neo-table tr:last-child td {
+    border-bottom: none;
+}
+
+.pemdas-legend {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.legend-badge {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-dark);
+}
+
+.legend-badge.p { background: #e0f2fe; color: #0369a1; }
+.legend-badge.e { background: #fef3c7; color: #b45309; }
+.legend-badge.md { background: #dcfce7; color: #15803d; }
+.legend-badge.as { background: #fce7f3; color: #be185d; }
+
+.pemdas-tree-box {
+    background: var(--canvas-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 16px;
+    padding: 1.25rem;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.tree-level-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.tree-step-pill {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+    font-weight: 900;
+    font-size: 0.72rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-dark);
+    flex-shrink: 0;
+}
+
+.tree-step-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 12px;
+    padding: 0.55rem 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.base-repr-display {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--text-main);
+    word-break: break-all;
+    margin-top: 0.35rem;
+}
+
+.base-repr-display.mono {
+    font-family: var(--font-mono);
+    font-size: 1.15rem;
+}
+
+.factors-inspector-card {
+    background: var(--chip-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.card-section-title {
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.factors-content {
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.fraction-simplifier-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    font-size: 0.84rem;
+    font-weight: 700;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--border-dark);
+}
+
+.mini-input {
+    width: 75px;
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 0.35rem 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.frac-res-badge {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    border: 1.5px solid var(--border-dark);
+    font-weight: 800;
+}
+
+/* ===================================================
+   L2 ALGEBRA & TRIG STUDIO STYLES
+   =================================================== */
+.unit-circle-canvas-box, .argand-canvas-box, .riemann-canvas-box, .transform-canvas-box, .eigen-canvas-box {
+    position: relative;
+    width: 100%;
+    height: 310px;
+    background: var(--canvas-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.unit-circle-controls-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.slider-control-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.slider-label {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.neo-slider {
+    flex-grow: 1;
+    min-width: 140px;
+    accent-color: var(--key-coral);
+    cursor: pointer;
+}
+
+.angle-quick-chips {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.quick-angle-btn {
+    background: var(--chip-bg);
+    color: var(--text-main);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 8px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.25rem 0.45rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.quick-angle-btn:hover {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+}
+
+.trig-readouts-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.65rem;
+}
+
+.trig-pill-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 14px;
+    padding: 0.65rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    box-shadow: 2px 2px 0px var(--border-dark);
+}
+
+.trig-pill-card.cos { border-left: 5px solid #00f2fe; }
+.trig-pill-card.sin { border-left: 5px solid #f472b6; }
+.trig-pill-card.tan { border-left: 5px solid #fbbf24; }
+.trig-pill-card.coord { border-left: 5px solid #52e3a8; }
+
+.trig-pill-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-muted);
+}
+
+.trig-pill-val {
+    font-size: 1.05rem;
+    font-weight: 900;
+    font-family: var(--font-mono);
+    color: var(--text-main);
+}
+
+/* Quadratic Solver */
+.quad-inputs-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    background: var(--chip-bg);
+    padding: 0.75rem 1rem;
+    border-radius: 14px;
+    border: 1.5px solid var(--border-dark);
+}
+
+.coeff-group {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 800;
+    font-size: 0.84rem;
+}
+
+.coeff-input {
+    width: 65px;
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 0.35rem 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.quad-results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85rem;
+}
+
+.quad-big-val {
+    font-size: 1.15rem;
+    font-weight: 900;
+    font-family: var(--font-mono);
+    color: var(--text-main);
+    margin: 0.25rem 0;
+}
+
+.mini-parabola-box {
+    height: 180px;
+    background: var(--canvas-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.complex-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+/* ===================================================
+   L3 CALCULUS STUDIO STYLES
+   =================================================== */
+.grapher-controls-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.grapher-fn-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.grapher-actions-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.math-rule-formula {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--key-coral);
+    margin: 0.25rem 0;
+    background: var(--chip-bg);
+    padding: 0.35rem 0.65rem;
+    border-radius: 8px;
+}
+
+.riemann-controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.slider-val-badge {
+    font-family: var(--font-mono);
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    background: var(--chip-bg);
+    border: 1px solid var(--border-dark);
+    border-radius: 6px;
+}
+
+.riemann-method-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* ===================================================
+   L4 MATRICES STUDIO STYLES
+   =================================================== */
+.matrices-editor-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1.25rem;
+    align-items: center;
+}
+
+.matrix-card {
+    background: var(--chip-bg);
+    border: var(--border-width) solid var(--border-dark);
+    border-radius: 18px;
+    padding: 1rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.matrix-card-title {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.matrix-2x2-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    background: var(--card-bg);
+    padding: 0.65rem;
+    border: 1.5px solid var(--border-dark);
+    border-radius: 12px;
+}
+
+.matrix-cell {
+    background: var(--chip-bg);
+    color: var(--text-main);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 8px;
+    padding: 0.5rem;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.matrix-presets-chips {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+}
+
+.matrix-preset-chip {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--border-dark);
+    border-radius: 6px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.2rem 0.45rem;
+    cursor: pointer;
+}
+
+.matrix-preset-chip:hover {
+    background: var(--key-mat-bg);
+    color: var(--key-mat-text);
+}
+
+.matrix-ops-center {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.matrix-op-btn {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1.5px solid var(--border-dark);
+    border-radius: 10px;
+    font-family: var(--font-main);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.45rem 0.85rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--border-dark);
+    transition: transform 0.1s;
+}
+
+.matrix-op-btn:hover {
+    background: var(--key-mat-bg);
+    color: var(--key-mat-text);
+}
+
+.matrix-op-btn.active {
+    background: var(--key-coral);
+    color: var(--key-coral-text);
+}
+
+.matrix-inline-repr {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--key-mat-text);
+    background: var(--key-mat-bg);
+    padding: 0.45rem 0.75rem;
+    border-radius: 8px;
+    margin: 0.35rem 0;
+    border: 1px solid var(--border-dark);
+}
+
+/* ===================================================
+   DARK THEME FIXES & POLISH
+   =================================================== */
+body.dark-theme .top-nav-bar,
+body.dark-theme .calc-device-frame,
+body.dark-theme .deck-body-card,
+body.dark-theme .derivation-bottom-card {
+    border-color: var(--border-dark);
+    color: var(--text-main);
+}
+
+body.dark-theme .view-title,
+body.dark-theme .brand-name,
+body.dark-theme .section-kicker,
+body.dark-theme .presets-label,
+body.dark-theme .section-title,
+body.dark-theme .toolbar-label {
+    color: var(--text-main);
+}
+
+body.dark-theme .view-subtitle {
+    color: var(--text-sub);
+}
+
+body.dark-theme .deck-tab-btn {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border-color: var(--border-dark);
+    box-shadow: 3px 3px 0px #06090e;
+}
+
+body.dark-theme .deck-tab-btn.active {
+    background: var(--key-mint);
+    color: var(--key-mint-text);
+    box-shadow: 1.5px 1.5px 0px #06090e;
+}
+
+body.dark-theme .level-pill {
+    color: var(--text-main);
+}
+
+body.dark-theme .level-pill.active {
+    background: #232c3d;
+    color: #ffffff;
+    box-shadow: 2px 2px 0px #06090e;
+}
+
+body.dark-theme .screen-math-input {
+    background: var(--screen-input-bg);
+    color: var(--screen-text);
+    border-color: var(--border-dark);
+}
+
+body.dark-theme .diag-card {
+    background: var(--card-bg);
+    border-color: var(--border-dark);
+    color: var(--text-main);
+}
+
+body.dark-theme .diag-details-box {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--border-dark);
+    color: var(--text-main);
+}
+
+body.dark-theme .neo-gate-btn {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border-color: var(--border-dark);
+    box-shadow: 2px 2px 0px #06090e;
+}
+
+body.dark-theme .copy-link-btn,
+body.dark-theme .action-sm-btn {
+    box-shadow: 1.5px 1.5px 0px #06090e;
+}
+
